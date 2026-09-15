@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop App | Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #0f6e63;
+            --brand-dark: #0b544b;
+            --brand-light: #e6f2f0;
+        }
+
+        body {
+            background-color: #f7f8f7;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .navbar-brand .brand-dot {
+            color: var(--brand);
+        }
+
+        .bg-brand {
+            background-color: var(--brand) !important;
+        }
+
+        .btn-brand {
+            background-color: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+        }
+
+        .btn-brand:hover {
+            background-color: var(--brand-dark);
+            border-color: var(--brand-dark);
+            color: #fff;
+        }
+
+        .text-brand {
+            color: var(--brand) !important;
+        }
+
+        .nav-link.active {
+            color: #fff !important;
+            font-weight: 600;
+            border-bottom: 2px solid #fff;
+        }
+
+        .card-auth {
+            max-width: 420px;
+            margin: 3rem auto;
+        }
+
+        .table thead th {
+            background-color: var(--brand-light);
+            border-bottom: 2px solid var(--brand);
+            font-weight: 600;
+        }
+
+        .hero {
+            background-color: var(--brand-light);
+            border-radius: 0.5rem;
+        }
+
+        footer {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Shop<span class="brand-dot">App</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sales.html">Sales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card shadow-sm card-auth">
+            <div class="card-body p-4">
+                <h3 class="text-center text-brand mb-1">Create an Account</h3>
+                <p class="text-center text-muted mb-4">Sign up to get started with Shop App</p>
+
+                <form onsubmit="return false;">
+                    <div class="mb-3">
+                        <label for="regName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="regName" placeholder="Jane Doe" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="regEmail" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="regEmail" placeholder="you@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="regPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="regPassword" placeholder="Create a password"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="regConfirmPassword"
+                            placeholder="Re-enter your password" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree to the <a href="#" class="text-brand text-decoration-none">Terms of Service</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-brand w-100">Create Account</button>
+                </form>
+
+                <p class="text-center mt-4 mb-0 small">
+                    Already have an account? <a href="login.html" class="text-brand text-decoration-none">Log in
+                        here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-4">
+        &copy; 2026 Shop App. All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

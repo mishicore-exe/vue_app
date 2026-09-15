@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Vue JS Concepts</h1>
+
+    <!-- Everything you want accessed in Vue, needs to be put within that div -->
+    <div id="app">
+
+        <p>{{ full_name }}</p>
+        <p>{{ location }}</p>
+
+        <p v-if="marks > 50">Pass</p>
+
+        <p v-if="marks < 50">Fail</p>
+
+        <ol>
+            <li v-for="student in students">{{ student.Name }} - {{ student.Grade }} - {{ student.Location }}</li>
+        </ol>
+    </div>
+
+    <!-- Paste the Vue cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.0/vue.js"></script>
+    <script>
+        new Vue({
+            // Capture the div with id app for vue to access
+            el: '#app',
+
+            // All variables are stored in data object below
+            data: {
+                full_name: "Mitchelle Warigia",
+                location: "Nairobi",
+                marks: 40,
+                students: [
+                    { "Name": "John", "Grade": "B", "Location": "Kisumu" },
+                    { "Name": "Alex", "Grade": "C", "Location": "Nairobi" },
+                    { "Name": "Jane", "Grade": "A", "Location": "Mombasa" }
+                ]
+            },
+
+            // All methods are stored in methods object
+            methods: {
+
+
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
