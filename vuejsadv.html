@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        {{ day }} <br>
+        <button :disabled="marks >= 10" @click="add_marks" >Add</button> &nbsp; | &nbsp;
+        <button :disabled="marks <= 0" @click="subtract_marks">Subtract</button>
+        <br>
+        {{ marks }}<br>
+        <button @click="api_call">Call Api</button>
+        <p>API: {{ api }}</p>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.0/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.25.0/axios.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                day : "Thursday",
+                marks : 0,
+                api : ""
+            },
+            methods: {
+
+                add_marks(){
+                    this.marks = this.marks + 1;
+                },
+                subtract_marks(){
+                    this.marks = this.marks - 1;
+                },
+                async api_call(){
+                    const res =await axios.get("http://127.0.0.1:5000/")
+                    console.log("result is", res.data);
+                    this.api = res.data["Flask API"];
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
