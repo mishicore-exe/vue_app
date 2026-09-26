@@ -10,10 +10,35 @@
     <div id="app">
         {{ external }} <br>
         {{ intro }}
-        
-        <ul>
-          <li  v-for="stock in ibm_stock">{{ stock }}</li>  
-        </ul>
+
+        <form @submit.prevent="saveName">
+            <label for="">First Name</label>
+            <input type="text" v-model="form.first_name">
+            <label for="">Last Name</label>
+            <input type="text" v-model="form.last_name">
+            <button type="submit">Save</button>
+        </form><br>
+
+        <h1>Full Name: {{ full_name }}</h1> <br>
+
+        <table border="1">
+            <thead>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Volume</th>
+            </thead>
+            <tbody>
+                <tr v-for="stock in ibm_stock">
+                     <td>{{ stock["1. open"] }}</td>
+                     <td>{{ stock["2. high"] }}</td>
+                     <td>{{ stock["3. low"] }}</td>
+                     <td>{{ stock["4. close"] }}</td>
+                     <td>{{ stock["5. volume"] }}</td>
+                </tr>
+            </tbody>
+        </table>
 
     </div>
 
@@ -25,7 +50,12 @@
             data : {
                 external : "Testing APIS",
                 intro : "Welcome to APIs",
-                ibm_stock : []
+                ibm_stock : [],
+                form: {
+                    first_name:"",
+                    last_name:""
+                },
+                full_name:""
             },
             methods: {
                 intro_method() {
@@ -36,19 +66,32 @@
                     const results = await axios.get("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo")
                     console.log(results.data["Time Series (5min)"])
                     this.ibm_stock= results.data["Time Series (5min)"]
+
+                    console.log(this.ibm_stock)
+                },
+                saveName(){
+                    console.log("first name ", this.form.first_name)
+                    console.log("last name ", this.form.last_name)
+
+                    localStorage.setItem("first_name", this.form.first_name)
+                    localStorage.setItem("last_name", this.form.last_name)
+
+                    this.form.first_name = " "
+                    this.form.last_name = " "
+
+                    this.full_name = localStorage.getItem("first_name") + " " + localStorage.getItem("last_name")
+
+                    window.location.reload()
+
                 }
             },
                 mounted(){
                 this.intro_method();
                 this.ibm_stock_call();
+                this.full_name = localStorage.getItem("first_name") + " " + localStorage.getItem("last_name")
+
             } 
         });
     </script>
-
-
-
-
-
-
 </body>
 </html>
