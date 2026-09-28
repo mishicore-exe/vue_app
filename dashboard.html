@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue App | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .background {
+            --brand: #0f6e63;
+            --brand-dark: #0b544b;
+            --brand-light: #e6f2f0;
+        }
+
+        body {
+            background-color: #f7f8f7;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .navbar-brand .brand-dot {
+            color: var(--brand);
+        }
+
+        .bg-brand {
+            background-color: var(--brand) !important;
+        }
+
+        .btn-brand {
+            background-color: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+        }
+
+        .btn-brand:hover {
+            background-color: var(--brand-dark);
+            border-color: var(--brand-dark);
+            color: #fff;
+        }
+
+        .text-brand {
+            color: var(--brand) !important;
+        }
+
+        .nav-link.active {
+            color: #fff !important;
+            font-weight: 600;
+            border-bottom: 2px solid #fff;
+        }
+
+        .card-auth {
+            max-width: 420px;
+            margin: 3rem auto;
+        }
+
+        .table thead th {
+            background-color: var(--brand-light);
+            border-bottom: 2px solid var(--brand);
+            font-weight: 600;
+        }
+
+        .hero {
+            background-color: var(--brand-light);
+            border-radius: 0.5rem;
+        }
+
+        footer {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm background">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Shop<span class="brand-dot">App</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sales.html">Sales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+
+        <!-- Hero -->
+        <div class="hero p-5 mb-4">
+            <h1 class="text-brand">Welcome back</h1>
+            <p class="lead mb-0">Here's a quick look at how the store is doing today.</p>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Products</h6>
+                        <h3 class="text-brand mb-0">128</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Sales Today</h6>
+                        <h3 class="text-brand mb-0">34</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Revenue</h6>
+                        <h3 class="text-brand mb-0">$2,410</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Low Stock</h6>
+                        <h3 class="text-brand mb-0">5</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick filter form -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Find an Order or Product</h5>
+                <form class="row g-3" onsubmit="return false;">
+                    <div class="col-md-4">
+                        <label for="searchTerm" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="searchTerm" placeholder="Product name or order ID">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="searchCategory" class="form-label">Category</label>
+                        <select id="searchCategory" class="form-select">
+                            <option selected value="">All categories</option>
+                            <option>Electronics</option>
+                            <option>Clothing</option>
+                            <option>Groceries</option>
+                            <option>Home &amp; Living</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="searchDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="searchDate">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-brand w-100">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- table -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Recent Activity</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Sale</td>
+                                <td>Wireless Mouse x2</td>
+                                <td>$39.98</td>
+                                <td>2026-09-14</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Product</td>
+                                <td>Added "USB-C Hub"</td>
+                                <td>&mdash;</td>
+                                <td>2026-09-14</td>
+                                <td><span class="badge bg-secondary">Info</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Sale</td>
+                                <td>Bluetooth Speaker x1</td>
+                                <td>$59.99</td>
+                                <td>2026-09-13</td>
+                                <td><span class="badge bg-warning text-dark">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Sale</td>
+                                <td>Office Chair x1</td>
+                                <td>$149.00</td>
+                                <td>2026-09-12</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center py-4 mt-4">
+            &copy; 2026 Shop App. All rights reserved.
+        </footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
