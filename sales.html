@@ -1,6 +1,6 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,83 +12,50 @@
             --brand-dark: #0b544b;
             --brand-light: #e6f2f0;
         }
-
         body {
             background-color: #f7f8f7;
         }
-
         .navbar-brand {
             font-weight: 700;
-            letter-spacing: 0.2px;
         }
-
-        .navbar-brand .brand-dot {
-            color: var(--brand);
-        }
-
         .bg-brand {
             background-color: var(--brand) !important;
         }
-
         .btn-brand {
             background-color: var(--brand);
             border-color: var(--brand);
-            color: #fff;
+            color: white;
         }
-
         .btn-brand:hover {
             background-color: var(--brand-dark);
-            border-color: var(--brand-dark);
-            color: #fff;
+            color: white;
         }
-
         .text-brand {
             color: var(--brand) !important;
         }
-
-        .nav-link.active {
-            color: #fff !important;
-            font-weight: 600;
-            border-bottom: 2px solid #fff;
-        }
-
-        .card-auth {
-            max-width: 420px;
-            margin: 3rem auto;
-        }
-
         .table thead th {
             background-color: var(--brand-light);
             border-bottom: 2px solid var(--brand);
-            font-weight: 600;
         }
-
-        .hero {
-            background-color: var(--brand-light);
-            border-radius: 0.5rem;
-        }
-
         footer {
             color: #6c757d;
-            font-size: 0.875rem;
+            font-size: 14px;
         }
     </style>
 </head>
-
 <body>
-
-    <!-- Navbar -->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Shop<span class="brand-dot">App</span></a>
+            <a class="navbar-brand" href="index.html">ShopApp</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="sales.html">Sales</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="sales.html">Sales</a></li>
                     <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
                     <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
                 </ul>
@@ -96,125 +63,104 @@
         </div>
     </nav>
 
-    <div class="container my-4">
+    <!-- Main Content -->
+    <div id="app" class="container my-4">
+        <div v-if="errorMsg" class="alert alert-danger">{{ errorMsg }}</div>
+        <div v-if="successMsg" class="alert alert-success">{{ successMsg }}</div>
 
-        <h1 class="text-brand mb-4">Sales</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-brand mb-0">Sales</h1>
+            <span class="text-muted small" v-if="user.full_name || user.email">
+                Logged in as {{ user.full_name || user.email }}
+            </span>
+        </div>
 
-        <!-- New sale form -->
+        <!-- Add or Edit Sale -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="card-title mb-3">Record a New Sale</h5>
-                <form class="row g-3" onsubmit="return false;">
+                <h5 class="mb-3">{{ editing ? "Edit Sale" : "Add a New Sale" }}</h5>
+                <form class="row g-3" @submit.prevent="editing ? updateSale() : addSale()">
                     <div class="col-md-4">
-                        <label for="saleProduct" class="form-label">Product</label>
-                        <select id="saleProduct" class="form-select" required>
-                            <option selected disabled value="">Choose a product...</option>
-                            <option>Wireless Mouse</option>
-                            <option>USB-C Hub</option>
-                            <option>Cotton T-Shirt</option>
-                            <option>Office Chair</option>
+                        <label class="form-label">Select Product</label>
+                        <select v-model="product_id" class="form-select" required>
+                            <option value="" disabled>Select a product</option>
+                            <option v-for="product in products" :key="product.id" :value="String(product.id)">
+                                {{ product.product_name }}
+                            </option>
                         </select>
+                        <small v-if="!loadingProducts && products.length === 0" class="text-danger">
+                            No products available. Add a product first.
+                        </small>
                     </div>
-                    <div class="col-md-3">
-                        <label for="saleCustomer" class="form-label">Customer Name</label>
-                        <input type="text" class="form-control" id="saleCustomer" placeholder="e.g. Jane Doe" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="saleQty" class="form-label">Quantity</label>
-                        <input type="number" min="1" class="form-control" id="saleQty" value="1" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="salePayment" class="form-label">Payment Method</label>
-                        <select id="salePayment" class="form-select" required>
-                            <option selected disabled value="">Choose...</option>
-                            <option>Cash</option>
-                            <option>Card</option>
-                            <option>Mobile Money</option>
-                        </select>
-                    </div>
+
                     <div class="col-md-4">
-                        <label for="saleDate" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="saleDate" required>
+                        <label class="form-label">Quantity</label>
+                        <input type="number" v-model.number="quantity" class="form-control" min="1" step="1" required>
                     </div>
+
                     <div class="col-md-4">
-                        <label for="saleAmount" class="form-label">Total Amount ($)</label>
-                        <input type="number" step="0.01" min="0" class="form-control" id="saleAmount" placeholder="0.00"
-                            required>
+                        <label class="form-label">Total (Ksh)</label>
+                        <input type="text" class="form-control" :value="saleTotal" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label for="saleStatus" class="form-label">Status</label>
-                        <select id="saleStatus" class="form-select">
-                            <option selected>Completed</option>
-                            <option>Pending</option>
-                            <option>Refunded</option>
-                        </select>
-                    </div>
+
                     <div class="col-12">
-                        <button type="submit" class="btn btn-brand">Record Sale</button>
-                        <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                        <button type="submit" class="btn btn-brand" :disabled="saving">
+                            {{ saving ? "Saving..." : (editing ? "Update Sale" : "Add Sale") }}
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary ms-2" @click="clearForm">
+                            Clear
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary ms-2" @click="refreshData">
+                            Refresh
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Sales table -->
+        <!-- Sales History -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <h5 class="card-title mb-3">Sales History</h5>
+                <h5 class="mb-3">Sales History</h5>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle">
                         <thead>
                             <tr>
-                                <th>Order #</th>
+                                <th>#</th>
                                 <th>Product</th>
-                                <th>Customer</th>
-                                <th>Qty</th>
-                                <th>Payment</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Status</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                                <th>Payments</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#1001</td>
-                                <td>Wireless Mouse</td>
-                                <td>Jane Doe</td>
-                                <td>2</td>
-                                <td>Card</td>
-                                <td>$39.98</td>
-                                <td>2026-09-14</td>
-                                <td><span class="badge bg-success">Completed</span></td>
+                            <tr v-for="(sale, index) in sales" :key="sale.id">
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ sale.product_name || productName(sale.product_id) || ("Product #" + sale.product_id) }}</td>
+                                <td>{{ sale.quantity }}</td>
+                                <td>Ksh {{ money(sale.total) }}</td>
+                                <td>{{ formatDate(sale.created_at) }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-brand" type="button" @click="editSale(sale)">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" type="button" @click="deleteSale(sale.id)">
+                                        Delete
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" type="button" @click="openPayment(sale)">
+                                        Pay
+                                    </button>
+                                </td>
                             </tr>
-                            <tr>
-                                <td>#1002</td>
-                                <td>Office Chair</td>
-                                <td>Mark Otieno</td>
-                                <td>1</td>
-                                <td>Mobile Money</td>
-                                <td>$149.00</td>
-                                <td>2026-09-12</td>
-                                <td><span class="badge bg-success">Completed</span></td>
+                            <tr v-if="!loadingSales && sales.length === 0">
+                                <td colspan="7" class="text-center">No sales found.</td>
                             </tr>
-                            <tr>
-                                <td>#1003</td>
-                                <td>USB-C Hub</td>
-                                <td>Amina Yusuf</td>
-                                <td>3</td>
-                                <td>Cash</td>
-                                <td>$73.50</td>
-                                <td>2026-09-13</td>
-                                <td><span class="badge bg-warning text-dark">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>#1004</td>
-                                <td>Cotton T-Shirt</td>
-                                <td>Peter Kim</td>
-                                <td>1</td>
-                                <td>Card</td>
-                                <td>$12.00</td>
-                                <td>2026-09-10</td>
-                                <td><span class="badge bg-danger">Refunded</span></td>
+                            <tr v-if="loadingSales">
+                                <td colspan="7" class="text-center">Loading sales...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -222,19 +168,335 @@
             </div>
         </div>
 
+        <!-- Payment Modal -->
+        <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form @submit.prevent="makePayment">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="paymentModalLabel">Make Payment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="paymentPhone" class="form-label">Phone Number</label>
+                                <input id="paymentPhone" type="tel" v-model.trim="payment.phone_number" class="form-control" placeholder="0712345678" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="paymentAmount" class="form-label">Amount (Ksh)</label>
+                                <input id="paymentAmount" type="number" v-model.number="payment.amount" class="form-control" min="1" step="1" required>
+                            </div>
+                            <div v-if="paymentError" class="alert alert-danger">{{ paymentError }}</div>
+                            <div v-if="paymentSuccess" class="alert alert-success">{{ paymentSuccess }}</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-brand" :disabled="paying">
+                                {{ paying ? "Processing..." : "Pay Now" }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <footer class="text-center py-4 mt-4">
             &copy; 2026 Shop App. All rights reserved.
         </footer>
-
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-        crossorigin="anonymous"></script>
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Vue Application -->
+    <script>
+        new Vue({
+            el: "#app",
+
+            data: {
+                products: [],
+                sales: [],
+                user: {},
+                sale_id: "",
+                product_id: "",
+                quantity: "",
+                editing: false,
+                errorMsg: "",
+                successMsg: "",
+                loadingProducts: false,
+                loadingSales: false,
+                saving: false,
+                payment: {
+                    sale_id: "",
+                    phone_number: "",
+                    amount: ""
+                },
+                paymentError: "",
+                paymentSuccess: "",
+                paying: false
+            },
+
+            mounted() {
+                if (!localStorage.getItem("token")) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                try {
+                    this.user = JSON.parse(localStorage.getItem("user") || "{}") || {};
+                } catch (error) {
+                    this.user = {};
+                }
+
+                this.refreshData();
+            },
+
+            computed: {
+                selectedProduct() {
+                    return this.products.find(
+                        product => String(product.id) === String(this.product_id)
+                    ) || null;
+                },
+
+                saleTotal() {
+                    if (!this.selectedProduct || !this.quantity || Number(this.quantity) < 1) {
+                        return "0";
+                    }
+
+                    return this.money(
+                        Number(this.selectedProduct.selling_price) * Number(this.quantity)
+                    );
+                }
+            },
+
+            methods: {
+                getHeaders() {
+                    return {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    };
+                },
+
+                readList(data) {
+                    if (Array.isArray(data)) return data;
+                    if (Array.isArray(data?.data)) return data.data;
+                    if (Array.isArray(data?.products)) return data.products;
+                    return [];
+                },
+
+                money(value) {
+                    return Number(value || 0).toLocaleString();
+                },
+
+                formatDate(value) {
+                    return value ? new Date(value).toLocaleString() : "—";
+                },
+
+                productName(id) {
+                    const product = this.products.find(
+                        item => String(item.id) === String(id)
+                    );
+                    return product ? product.product_name : "";
+                },
+
+                handleError(error, fallback) {
+                    console.error(
+                        fallback,
+                        error.response?.data || error.message || error
+                    );
+
+                    if (error.response?.status === 401) {
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("user");
+                        window.location.href = "login.html";
+                        return;
+                    }
+
+                    this.errorMsg =
+                        error.response?.data?.Error ||
+                        error.response?.data?.error ||
+                        fallback;
+                },
+
+                async refreshData() {
+                    await Promise.all([
+                        this.getProducts(),
+                        this.getSales()
+                    ]);
+                },
+
+                async getProducts() {
+                    this.loadingProducts = true;
+
+                    try {
+                        const response = await axios.get(
+                            "http://127.0.0.1:5000/products",
+                            { headers: this.getHeaders() }
+                        );
+
+                        this.products = this.readList(response.data);
+                        console.log("Products loaded:", this.products);
+                    } catch (error) {
+                        this.handleError(error, "Failed to fetch products.");
+                    } finally {
+                        this.loadingProducts = false;
+                    }
+                },
+
+                async getSales() {
+                    this.loadingSales = true;
+
+                    try {
+                        const response = await axios.get(
+                            "http://127.0.0.1:5000/sales",
+                            { headers: this.getHeaders() }
+                        );
+
+                        this.sales = this.readList(response.data);
+                        console.log("Sales loaded:", this.sales);
+                    } catch (error) {
+                        this.handleError(error, "Failed to fetch sales.");
+                    } finally {
+                        this.loadingSales = false;
+                    }
+                },
+
+                async addSale() {
+                    this.errorMsg = "";
+                    this.successMsg = "";
+                    this.saving = true;
+
+                    try {
+                        const response = await axios.post(
+                            "http://127.0.0.1:5000/sales",
+                            {
+                                product_id: Number(this.product_id),
+                                quantity: Number(this.quantity)
+                            },
+                            { headers: this.getHeaders() }
+                        );
+
+                        this.successMsg =
+                            response.data?.Message || "Sale added successfully.";
+
+                        this.clearForm();
+                        await this.getSales();
+                    } catch (error) {
+                        this.handleError(error, "Failed to add sale.");
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                editSale(sale) {
+                    this.editing = true;
+                    this.sale_id = sale.id;
+                    this.product_id = String(sale.product_id);
+                    this.quantity = Number(sale.quantity);
+                    this.errorMsg = "";
+                    this.successMsg = "";
+
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+                },
+
+                async updateSale() {
+                    this.errorMsg = "";
+                    this.successMsg = "";
+                    this.saving = true;
+
+                    try {
+                        const response = await axios.put(
+                            "http://127.0.0.1:5000/sales",
+                            {
+                                id: this.sale_id,
+                                product_id: Number(this.product_id),
+                                quantity: Number(this.quantity)
+                            },
+                            { headers: this.getHeaders() }
+                        );
+
+                        this.successMsg =
+                            response.data?.Message || "Sale updated successfully.";
+
+                        this.clearForm();
+                        await this.getSales();
+                    } catch (error) {
+                        this.handleError(error, "Failed to update sale.");
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                clearForm() {
+                    this.sale_id = "";
+                    this.product_id = "";
+                    this.quantity = "";
+                    this.editing = false;
+                },
+
+                async deleteSale(id) {
+                    if (!confirm("Are you sure you want to delete this sale?")) {
+                        return;
+                    }
+
+                    this.errorMsg = "";
+                    this.successMsg = "";
+
+                    try {
+                        const response = await axios.delete(
+                            "http://127.0.0.1:5000/sales",
+                            {
+                                headers: this.getHeaders(),
+                                data: { id: id }
+                            }
+                        );
+
+                        this.successMsg =
+                            response.data?.Message || "Sale deleted successfully.";
+
+                        await this.getSales();
+                    } catch (error) {
+                        this.handleError(error, "Failed to delete sale.");
+                    }
+                },
+
+                openPayment(sale) {
+                    this.payment = {
+                        sale_id: sale.id,
+                        phone_number: "",
+                        amount: Number(sale.total) || ""
+                    };
+
+                    this.paymentError = "";
+                    this.paymentSuccess = "";
+
+                    bootstrap.Modal.getOrCreateInstance(
+                        document.getElementById("paymentModal")
+                    ).show();
+                },
+
+                makePayment() {
+                    this.paymentError = "";
+                    this.paymentSuccess = "";
+
+                    if (
+                        !this.payment.phone_number ||
+                        !this.payment.amount ||
+                        Number(this.payment.amount) <= 0
+                    ) {
+                        this.paymentError = "Enter a valid phone number and amount.";
+                        return;
+                    }
+
+                    this.paymentError =
+                        "The modal is ready, but it is not connected to a payment API yet.";
+                }
+            }
+        });
+    </script>
 </body>
-
 </html>
